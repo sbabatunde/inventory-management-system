@@ -1,0 +1,78 @@
+# ============================================
+# Laravel Backend
+# ============================================
+
+# PHP
+vendor/
+node_modules/
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Laravel
+public/storage
+public/build
+storage/*.key
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*.log
+bootstrap/cache/*.php
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache
+
+# Composer
+composer.phar
+composer.lock
+
+# ============================================
+# Frontend (React)
+# ============================================
+
+# Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Environment
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# General
+# ============================================
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup

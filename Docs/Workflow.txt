@@ -1,0 +1,216 @@
+# WORKFLOW DOCUMENTATION
+## Business Process Flows
+
+---
+
+## Table of Contents
+1. [Purchase-to-Store Flow](#1-purchase-to-store)
+2. [Installation Release Flow](#2-installation-release)
+3. [Maintenance Release Flow](#3-maintenance-release)
+4. [Others Release Flow](#4-others-release)
+5. [Offline/Manual Flow](#5-offlinemanual)
+6. [Multi-Store Transfer](#6-multi-store-transfer)
+7. [Release Form Lifecycle](#7-release-form-lifecycle)
+
+---
+
+## 1. Purchase-to-Store Flow
+
+### Process Steps:
+Create Purchase Requisition
+↓
+
+Approve Requisition
+↓
+
+Create Purchase Order
+↓
+
+Send to Supplier
+↓
+
+Receive Goods
+↓
+
+Stock Updated Automatically
+
+text
+
+### Detailed Workflow:
+| Step | Actor | Action | System Response |
+|------|-------|--------|-----------------|
+| 1 | Storekeeper | Create PR | PR number generated |
+| 2 | Manager | Approve PR | Status → Approved |
+| 3 | Procurement | Create PO | PO number generated |
+| 4 | Procurement | Send PO | Status → Sent |
+| 5 | Storekeeper | Receive Goods | Stock increased |
+| 6 | System | Update Balance | GR created |
+
+---
+
+## 2. Installation Release Flow
+
+### Process Steps:
+Create Release Form (Installation)
+↓
+
+Enter Job Order Number
+↓
+
+Fetch from CRM
+↓
+
+Auto-fill Destination & Equipment
+↓
+
+Add Signatories
+↓
+
+Submit for Approval
+↓
+
+Approve
+↓
+
+Dispatch (Stock Deducted)
+↓
+
+Complete
+↓
+
+CRM Updated
+
+text
+
+### Detailed Workflow:
+| Step | Actor | Action | System Response |
+|------|-------|--------|-----------------|
+| 1 | Engineer | Create form | Form created as Draft |
+| 2 | Engineer | Enter JO number | - |
+| 3 | System | Fetch from CRM | Auto-fill data |
+| 4 | Engineer | Review & add items | - |
+| 5 | Engineer | Add signatories | Signatories added |
+| 6 | Engineer | Submit | Status → Pending Approval |
+| 7 | Manager | Approve | Status → Approved |
+| 8 | Storekeeper | Dispatch | Stock deducted |
+| 9 | Engineer | Complete | Status → Completed |
+| 10 | System | Notify CRM | CRM updated |
+
+---
+
+## 3. Maintenance Release Flow
+
+### Process Steps:
+Create Release Form (Maintenance)
+↓
+
+Enter Ticket Number
+↓
+
+Fetch from CRM
+↓
+
+Auto-fill Details
+↓
+
+Add Items & Signatories
+↓
+
+Submit → Approve → Dispatch → Complete
+
+text
+
+---
+
+## 4. Others Release Flow
+
+### Process Steps:
+Create Release Form (Others)
+↓
+
+Enter Description
+↓
+
+Add Items Manually
+↓
+
+Add Signatories
+↓
+
+Submit → Approve → Dispatch → Complete
+
+text
+
+---
+
+## 5. Offline/Manual Flow
+
+### Process Steps:
+Fill Paper Form
+↓
+
+Upload Scanned Form
+↓
+
+Enter Details
+↓
+
+Status → Pending Reconciliation
+↓
+
+Verify & Reconcile
+↓
+
+Status → Pending Approval
+↓
+
+Normal Approval Flow
+
+text
+
+---
+
+## 6. Multi-Store Transfer
+
+### Process Steps:
+Create Transfer Request
+↓
+
+Approve Transfer
+↓
+
+Items in Transit
+↓
+
+Receive at Destination
+↓
+
+Stock Updated at Both Stores
+
+text
+
+---
+
+## 7. Release Form Lifecycle
+
+### Status Transitions:
+Draft
+↓ Submit
+Pending Approval
+↓ Approve / Reject
+Approved → Rejected
+↓ Dispatch
+Dispatched
+↓ Complete
+Completed
+
+text
+
+### Cancellation Points:
+- Draft → Cancelled
+- Pending Approval → Cancelled
+- Approved → Cancelled
+
+### Manual Entry Path:
+Manual Upload → Pending Reconciliation → Pending Approval → ... → Completed
+

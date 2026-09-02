@@ -1,0 +1,11 @@
+{
+    "name": "ReleaseForm",
+    "alias": "releaseform",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ReleaseForm\\Providers\\ReleaseFormServiceProvider"
+    ],
+    "files": []
+}

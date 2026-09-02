@@ -1,0 +1,412 @@
+markdown
+# TECHNICAL ARCHITECTURE DOCUMENT
+## Inventory, Equipment Release & Logistics Management System
+
+**Version:** 1.0
+**Date:** September 2026
+**Status:** Final
+
+---
+
+## Table of Contents
+1. [System Overview](#1-system-overview)
+2. [Architecture Overview](#2-architecture-overview)
+3. [Technology Stack](#3-technology-stack)
+4. [Module Architecture](#4-module-architecture)
+5. [Database Design](#5-database-design)
+6. [API Design](#6-api-design)
+7. [Security Architecture](#7-security-architecture)
+8. [Integration Architecture](#8-integration-architecture)
+9. [Deployment Architecture](#9-deployment-architecture)
+
+---
+
+## 1. System Overview
+
+### 1.1 Purpose
+The Inventory & Equipment Release Management System is a comprehensive solution designed to manage:
+- Multi-store inventory tracking
+- Equipment release workflows (Installation, Maintenance, Others)
+- Asset lifecycle management
+- Procurement processes
+- CRM integration
+- Reporting and analytics
+
+### 1.2 Key Features
+- Multi-store inventory management
+- Serialized item tracking
+- Release form lifecycle management
+- E-signature support
+- Manual/offline entry support
+- CRM integration (Job Orders, Tickets)
+- Role-based access control
+- Complete audit trail
+- Real-time stock updates
+- Dashboard aggregation
+
+### 1.3 System Modules
+| Module | Purpose |
+|--------|---------|
+| Core | Authentication, users, roles, settings |
+| Inventory | Stock management, transfers, adjustments |
+| Assets | Equipment tracking, depreciation |
+| ReleaseForm | Release workflows, approvals |
+| Procurement | Suppliers, purchase orders |
+| Integration | CRM communication |
+| Reporting | Analytics, exports |
+
+---
+
+## 2. Architecture Overview
+
+### 2.1 High-Level Architecture
+┌─────────────────────────────────────────────────────────────┐
+│ Frontend (React) │
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│ │ Core │ │Inventory │ │ Release │ │ Assets │ │
+│ └──────────┘ └──────────┘ └──────────┘ └──────────┘ │
+└─────────────────────────────────────────────────────────────┘
+│
+│ REST API
+▼
+┌─────────────────────────────────────────────────────────────┐
+│ API Gateway (Laravel) │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │ Authentication (Sanctum) │ │
+│ └──────────────────────────────────────────────────────┘ │
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│ │ Core │ │Inventory │ │ Release │ │ Assets │ │
+│ │ Module │ │ Module │ │ Module │ │ Module │ │
+│ └──────────┘ └──────────┘ └──────────┘ └──────────┘ │
+└─────────────────────────────────────────────────────────────┘
+│
+┌─────────┴─────────┐
+│ │
+▼ ▼
+┌──────────────────┐ ┌──────────────────┐
+│ Database │ │ CRM System │
+│ (MySQL/Postgres)│ │ (External) │
+└──────────────────┘ └──────────────────┘
+
+text
+
+### 2.2 Layered Architecture
+┌─────────────────────────────────────────┐
+│ Presentation Layer │
+│ (React Components, UI) │
+├─────────────────────────────────────────┤
+│ API Layer │
+│ (Controllers, Requests) │
+├─────────────────────────────────────────┤
+│ Service Layer │
+│ (Business Logic, Services) │
+├─────────────────────────────────────────┤
+│ Repository Layer │
+│ (Data Access, Repositories) │
+├─────────────────────────────────────────┤
+│ Data Layer │
+│ (Models, Migrations) │
+└─────────────────────────────────────────┘
+
+text
+
+---
+
+## 3. Technology Stack
+
+### 3.1 Backend
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| PHP | 8.3+ | Core language |
+| Laravel | 13.x | Framework |
+| nWidart Modules | 13.x | Modular architecture |
+| Sanctum | - | API authentication |
+| Spatie Permission | 8.x | RBAC |
+| Spatie Activitylog | 5.x | Audit trail |
+| Redis | - | Cache & queues |
+| MySQL/PostgreSQL | - | Database |
+
+### 3.2 Frontend
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| React | 18.x | UI framework |
+| TypeScript | 5.x | Type safety |
+| Tailwind CSS | 3.x | Styling |
+| Axios | - | HTTP client |
+| React Router | 6.x | Routing |
+| React Hot Toast | - | Notifications |
+
+---
+
+## 4. Module Architecture
+
+### 4.1 Module Structure
+Modules/
+├── Core/
+│ ├── app/
+│ │ ├── Http/
+│ │ │ ├── Controllers/
+│ │ │ ├── Requests/
+│ │ │ └── Resources/
+│ │ ├── Models/
+│ │ ├── Services/
+│ │ ├── Repositories/
+│ │ └── Enums/
+│ ├── database/
+│ │ └── migrations/
+│ ├── routes/
+│ └── CoreServiceProvider.php
+├── Inventory/
+├── Assets/
+├── ReleaseForm/
+├── Procurement/
+├── Integration/
+└── Reporting/
+
+text
+
+### 4.2 Design Patterns Used
+- **Repository Pattern** - Data access abstraction
+- **Service Pattern** - Business logic encapsulation
+- **DTO Pattern** - Data transfer objects
+- **Enum Pattern** - Type-safe constants
+- **Observer Pattern** - Event listeners
+- **Strategy Pattern** - Different release categories
+- **Circuit Breaker** - CRM integration resilience
+
+---
+
+## 5. Database Design
+
+### 5.1 Core Tables
+```sql
+-- Users Table
+users
+  - id
+  - crm_user_id (nullable)
+  - name
+  - email
+  - password
+  - is_active
+  - last_synced_at
+
+-- Stores Table
+stores
+  - id
+  - name
+  - code
+  - type (HQ/Branch/POP)
+  - is_active
+
+-- Stock Items
+stock_items
+  - id
+  - code
+  - name
+  - nature (asset/solid/liquid)
+  - is_serialized
+  - unit_of_measure
+  - reorder_level
+  - unit_cost
+
+-- Stock Balances
+stock_balances
+  - id
+  - store_id
+  - stock_item_id
+  - quantity_on_hand
+  - quantity_reserved
+  - quantity_available
+5.2 Release Form Tables
+sql
+-- Release Forms
+release_forms
+  - id
+  - form_no
+  - category (installation/maintenance/others)
+  - reference_type (job_order/ticket/other)
+  - reference_id
+  - store_id
+  - destination_type
+  - status
+  - is_manual_entry
+
+-- Release Form Items
+release_form_items
+  - id
+  - release_form_id
+  - stock_item_id
+  - qty_requested
+  - qty_released
+  - qty_before
+  - qty_after
+
+-- Signatories
+release_form_signatories
+  - id
+  - release_form_id
+  - user_id/crm_user_id
+  - role
+  - signature_ref
+  - signed_at
+6. API Design
+6.1 API Conventions
+Base URL: /api/v1
+
+Authentication: Bearer token (Sanctum)
+
+Response format: JSON
+
+Pagination: ?page=1&per_page=15
+
+Filtering: ?search=term&status=active
+
+6.2 Standard Response Format
+json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "pagination": {
+    "current_page": 1,
+    "last_page": 10,
+    "per_page": 15,
+    "total": 150
+  }
+}
+7. Security Architecture
+7.1 Authentication Flow
+text
+1. User provides credentials
+2. System validates (local or CRM)
+3. Token generated (Sanctum)
+4. Token used for subsequent requests
+5. Token expires after configured time
+7.2 Authorization
+Role-based access control (RBAC)
+
+Permission-based checks
+
+Middleware for route protection
+
+Segregation of duties
+
+7.3 Audit Trail
+Every action logged
+
+Who → What → When → Before → After → Reason
+
+Immutable historical records
+
+Manual entries flagged
+
+8. Integration Architecture
+8.1 CRM Integration
+text
+┌─────────────┐         ┌─────────────┐
+│   Inventory  │ ──────→ │     CRM     │
+│   System     │ ←────── │   System    │
+└─────────────┘         └─────────────┘
+       │                       │
+       │ 1. Fetch Job Orders   │
+       │ 2. Fetch Tickets      │
+       │ 3. Fetch Users        │
+       │ 4. Update Status      │
+       │                       │
+8.2 Integration Points
+Authentication: Token validation
+
+Release Forms: Job Order/Ticket fetching
+
+Signatories: User search
+
+Status Updates: Notify CRM on approval
+
+User Sync: Auto-sync on login
+
+8.3 Resilience
+Circuit breaker pattern
+
+Retry with backoff
+
+Graceful degradation
+
+Async processing (queues)
+
+9. Deployment Architecture
+9.1 Server Requirements
+PHP 8.3+
+
+MySQL 8.0+ or PostgreSQL 14+
+
+Redis 7+
+
+Node.js 18+
+
+Nginx/Apache
+
+9.2 Deployment Setup
+text
+┌─────────────────────────────────┐
+│         Nginx (Port 80/443)     │
+├─────────────────────────────────┤
+│      Laravel App (PHP-FPM)      │
+├─────────────────────────────────┤
+│    React Frontend (Static)      │
+├─────────────────────────────────┤
+│      Redis (Cache/Queue)        │
+├─────────────────────────────────┤
+│   MySQL/PostgreSQL (Database)   │
+└─────────────────────────────────┘
+9.3 Environment Variables
+env
+APP_NAME="Inventory System"
+APP_ENV=production
+APP_URL=https://inventory.example.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_DATABASE=inventory
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+CRM_URL=https://crm.example.com
+CRM_APP_SECRET=your-secret
+
+FRONTEND_URL=https://inventory.example.com
+Appendix
+A. Key Design Decisions
+Modular Monolith over microservices for simplicity
+
+Repository Pattern for data access abstraction
+
+DTO Pattern for clean data transfer
+
+Event-driven for decoupled side effects
+
+Circuit Breaker for CRM resilience
+
+B. Performance Optimizations
+Caching in repositories
+
+Pre-aggregated reports
+
+Queue for async operations
+
+Database indexing
+
+Eager loading relationships
+
+C. Security Best Practices
+Password hashing (bcrypt)
+
+Token-based authentication
+
+Input validation
+
+SQL injection prevention
+
+XSS protection
+
+CSRF protection

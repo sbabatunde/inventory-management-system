@@ -1,0 +1,9 @@
+{
+    "Core": true,
+    "Inventory": true,
+    "ReleaseForm": true,
+    "Assets": true,
+    "Procurement": true,
+    "Integration": true,
+    "Reporting": true
+}

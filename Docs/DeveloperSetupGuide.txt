@@ -1,0 +1,186 @@
+# DEVELOPER SETUP GUIDE
+## Getting Started with Development
+
+---
+
+## Table of Contents
+1. [Prerequisites](#1-prerequisites)
+2. [Installation](#2-installation)
+3. [Configuration](#3-configuration)
+4. [Database Setup](#4-database-setup)
+5. [Running the Application](#5-running)
+6. [Development Workflow](#6-workflow)
+7. [Testing](#7-testing)
+
+---
+
+## 1. Prerequisites
+
+### Required Software:
+- PHP 8.3+
+- Composer 2.x
+- Node.js 18+
+- npm/yarn
+- MySQL 8.0+ or PostgreSQL 14+
+- Redis 7+ (optional for development)
+- Git
+
+---
+
+## 2. Installation
+
+### Backend Setup:
+```bash
+# Clone repository
+git clone [repository-url]
+cd inventory-system
+
+# Install PHP dependencies
+composer install
+
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Create modules
+php artisan module:make Core
+php artisan module:make Inventory
+php artisan module:make Assets
+php artisan module:make ReleaseForm
+php artisan module:make Procurement
+php artisan module:make Integration
+php artisan module:make Reporting
+Frontend Setup:
+bash
+# Navigate to frontend
+cd frontend
+
+# Install dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env
+3. Configuration
+Backend .env:
+env
+APP_NAME="Inventory System"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=inventory_system
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Authentication
+AUTH_LOCAL_ENABLED=true
+AUTH_CRM_ENABLED=false
+
+# CRM (when ready)
+CRM_URL=http://crm.example.com
+CRM_APP_SECRET=your-secret
+
+# Frontend
+FRONTEND_URL=http://localhost:5173
+Frontend .env:
+env
+VITE_API_URL=http://localhost:8000/api
+4. Database Setup
+bash
+# Run migrations
+php artisan migrate
+
+# Run seeders
+php artisan db:seed
+
+# Create test data
+php artisan db:seed --class=TestDataSeeder
+Default Users:
+Email	Password	Role
+admin@inventory.com	password	Super Admin
+manager@inventory.com	password	Manager
+staff@inventory.com	password	Staff
+user@inventory.com	password	User
+5. Running the Application
+Start Backend:
+bash
+php artisan serve
+# Backend runs at http://localhost:8000
+Start Frontend:
+bash
+cd frontend
+npm run dev
+# Frontend runs at http://localhost:5173
+Start Queue Worker (for CRM sync):
+bash
+php artisan queue:work
+Start Redis (if using):
+bash
+redis-server
+6. Development Workflow
+Creating a New Module:
+bash
+php artisan module:make ModuleName
+Creating a Controller:
+bash
+php artisan module:make-controller ControllerName ModuleName
+Creating a Model:
+bash
+php artisan module:make-model ModelName ModuleName
+Creating a Migration:
+bash
+php artisan module:make-migration create_table_name_table ModuleName
+Creating a Service:
+bash
+php artisan module:make-service ServiceName ModuleName
+Creating a Repository:
+bash
+php artisan module:make-repository RepositoryName ModuleName
+7. Testing
+bash
+# Run all tests
+php artisan test
+
+# Run specific module tests
+php artisan test Modules/Inventory/Tests
+
+# Run with coverage
+php artisan test --coverage
+Writing Tests:
+php
+// Modules/ModuleName/Tests/Feature/FeatureTest.php
+namespace Modules\ModuleName\Tests\Feature;
+
+use Tests\TestCase;
+
+class FeatureTest extends TestCase
+{
+    /** @test */
+    public function test_example()
+    {
+        $this->assertTrue(true);
+    }
+}
+Appendix
+Common Issues & Solutions
+Q: Module not loading
+
+bash
+composer dump-autoload
+php artisan optimize:clear
+Q: Permissions not working
+
+bash
+php artisan permission:cache-reset
+Q: CRM integration failing
+
+Check CRM URL in .env
+
+Check network connectivity
+
+Check circuit breaker status
