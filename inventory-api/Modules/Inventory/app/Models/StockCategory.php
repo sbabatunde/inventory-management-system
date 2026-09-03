@@ -1,22 +1,59 @@
 <?php
+// Modules/Inventory/app/Models/StockCategory.php
 
 namespace Modules\Inventory\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Inventory\Database\Factories\StockCategoryFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockCategory extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'name',
+        'code',
+        'description',
+        'parent_id',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     /**
-     * The attributes that are mass assignable.
+     * Get parent category
      */
-    protected $fillable = [];
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(StockCategory::class, 'parent_id');
+    }
 
-    // protected static function newFactory(): StockCategoryFactory
-    // {
-    //     // return StockCategoryFactory::new();
-    // }
+    /**
+     * Get child categories
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(StockCategory::class, 'parent_id');
+    }
+
+    /**
+     * Get stock items in this category
+     */
+    public function stockItems(): HasMany
+    {
+        return $this->hasMany(StockItem::class, 'category_id');
+    }
+
+    /**
+     * Scope for active categories
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 // Modules/Inventory/app/Http/Requests/UpdateStockItemRequest.php
 
-namespace Modules\Inventory\App\Http\Requests;
+namespace Modules\Inventory\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\Inventory\app\Enums\StockNature;

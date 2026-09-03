@@ -10,7 +10,7 @@ use Modules\Inventory\app\Http\Controllers\StockSerialController;
 use Modules\Inventory\app\Http\Controllers\StockTransferController;
 use Modules\Inventory\app\Http\Controllers\StoreController;
 
-Route::middleware('auth:sanctum')->prefix('inventory')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1/inventory')->group(function () {
     // Store routes
     Route::prefix('stores')->group(function () {
         Route::get('/', [StoreController::class, 'index'])->middleware('permission:view-stores');

@@ -105,16 +105,20 @@ class AuthenticationService
   /**
    * Generate Sanctum token
    */
+
   protected function generateSanctumToken(User $user, string $source): string
   {
     // Delete old tokens
-    $user->tokens()->where('name', 'auth_token')->delete();
+    if (\Illuminate\Support\Facades\Schema::hasTable('personal_access_tokens')) {
+      $user->tokens()->where('name', 'auth_token')->delete();
+    }
 
-    // Create new token
-    $token = $user->createToken('auth_token', ['*'], [
-      'source' => $source,
-      'expires_at' => $this->getTokenExpiry(),
-    ])->plainTextToken;
+    // Create new token with expiry
+    $token = $user->createToken(
+      'auth_token',
+      ['*'],
+      $this->getTokenExpiry()  // Pass Carbon instance directly, not array
+    )->plainTextToken;
 
     return $token;
   }
@@ -125,16 +129,19 @@ class AuthenticationService
   protected function syncCrmUser(array $userData): User
   {
     return DB::transaction(function () use ($userData) {
+      // Try to find by crm_user_id first
       $user = User::where('crm_user_id', $userData['crm_user_id'])
         ->lockForUpdate()
         ->first();
 
       if (!$user) {
+        // Try to find by email
         $user = User::where('email', $userData['email'])
           ->lockForUpdate()
           ->first();
 
         if (!$user) {
+          // Create new user
           $user = User::create([
             'crm_user_id' => $userData['crm_user_id'],
             'name' => $userData['name'],
@@ -142,23 +149,34 @@ class AuthenticationService
             'password' => Hash::make(uniqid('crm_', true)),
             'is_active' => true,
             'email_verified_at' => now(),
+            'last_synced_at' => now(),
           ]);
         } else {
-          $user->crm_user_id = $userData['crm_user_id'];
-          $user->save();
+          // Link existing user to CRM AND update their info
+          $user->update([
+            'crm_user_id' => $userData['crm_user_id'],
+            'name' => $userData['name'],  // Update name
+            'is_active' => true,
+            'last_synced_at' => now(),
+          ]);
         }
       } else {
-        $user->name = $userData['name'];
-        $user->email = $userData['email'];
-        $user->is_active = true;
-        $user->save();
+        // Update existing CRM user
+        $user->update([
+          'name' => $userData['name'],  // Update name
+          'email' => $userData['email'],  // Update email
+          'is_active' => true,
+          'last_synced_at' => now(),
+        ]);
       }
 
-      // Sync roles and permissions
-      if (isset($userData['roles'])) {
+      // Sync roles
+      if (isset($userData['roles']) && is_array($userData['roles'])) {
         $user->syncRoles($userData['roles']);
       }
-      if (isset($userData['permissions'])) {
+
+      // Sync permissions
+      if (isset($userData['permissions']) && is_array($userData['permissions'])) {
         $user->syncPermissions($userData['permissions']);
       }
 
@@ -211,6 +229,6 @@ class AuthenticationService
 
   protected function getTokenExpiry(): ?Carbon
   {
-    return now()->addMinutes(config('auth-methods.session.lifetime'));
+    return now()->addMinutes((int) config('auth-methods.session.lifetime', 120));
   }
 }

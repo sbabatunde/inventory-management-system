@@ -1,7 +1,7 @@
 <?php
 // Modules/Reporting/app/Enums/ReportPeriod.php
 
-namespace Modules\Reporting\App\Enums;
+namespace Modules\Reporting\app\Enums;
 
 enum ReportPeriod: string
 {

@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Services/PurchaseRequisitionService.php
 
-namespace Modules\Procurement\App\Services;
+namespace Modules\Procurement\app\Services;
 
 use Modules\Procurement\App\Models\PurchaseRequisition;
 use Modules\Procurement\App\Models\PurchaseRequisitionItem;

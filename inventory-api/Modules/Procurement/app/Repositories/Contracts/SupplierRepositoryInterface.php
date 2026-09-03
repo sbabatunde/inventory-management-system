@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Repositories/Contracts/SupplierRepositoryInterface.php
 
-namespace Modules\Procurement\App\Repositories\Contracts;
+namespace Modules\Procurement\app\Repositories\Contracts;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Procurement\App\Models\Supplier;

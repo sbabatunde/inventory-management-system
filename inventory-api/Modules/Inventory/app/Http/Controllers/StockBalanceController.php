@@ -1,7 +1,7 @@
 <?php
 // Modules/Inventory/app/Http/Controllers/StockBalanceController.php
 
-namespace Modules\Inventory\App\Http\Controllers;
+namespace Modules\Inventory\app\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Modules\Inventory\app\Services\StockBalanceService;

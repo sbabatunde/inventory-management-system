@@ -3,17 +3,18 @@
 
 namespace Modules\Assets\app\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Modules\Assets\app\Enums\AssetType;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Assets\app\Enums\AssetStatus;
+use Modules\Assets\app\Enums\AssetType;
 use Modules\Assets\app\Enums\DepreciationMethod;
 
 class Assets extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'asset_code',

@@ -1,7 +1,7 @@
 <?php
 // Modules/ReleaseForm/app/Services/ReleaseFormService.php
 
-namespace Modules\ReleaseForm\App\Services;
+namespace Modules\ReleaseForm\app\Services;
 
 use Modules\ReleaseForm\App\Models\ReleaseForm;
 use Modules\ReleaseForm\App\Models\ReleaseFormItem;

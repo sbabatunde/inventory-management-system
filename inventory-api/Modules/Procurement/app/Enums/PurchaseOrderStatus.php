@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Enums/PurchaseOrderStatus.php
 
-namespace Modules\Procurement\App\Enums;
+namespace Modules\Procurement\app\Enums;
 
 enum PurchaseOrderStatus: string
 {

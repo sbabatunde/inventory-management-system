@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Enums/RequisitionStatus.php
 
-namespace Modules\Procurement\App\Enums;
+namespace Modules\Procurement\app\Enums;
 
 enum RequisitionStatus: string
 {

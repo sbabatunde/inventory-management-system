@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Enums/RequisitionPriority.php
 
-namespace Modules\Procurement\App\Enums;
+namespace Modules\Procurement\app\Enums;
 
 enum RequisitionPriority: string
 {

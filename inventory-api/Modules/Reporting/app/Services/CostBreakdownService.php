@@ -1,7 +1,7 @@
 <?php
 // Modules/Reporting/app/Services/CostBreakdownService.php
 
-namespace Modules\Reporting\App\Services;
+namespace Modules\Reporting\app\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;

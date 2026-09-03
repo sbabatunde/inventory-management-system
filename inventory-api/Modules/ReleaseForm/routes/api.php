@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\ReleaseForm\app\Http\Controllers\ReleaseFormController;
 use Modules\ReleaseForm\app\Http\Controllers\SignatoryController;
 
-Route::middleware('auth:sanctum')->prefix('release-forms')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1/release-forms')->group(function () {
     Route::get('/', [ReleaseFormController::class, 'index'])->middleware('permission:view-release-forms');
     Route::post('/', [ReleaseFormController::class, 'store'])->middleware('permission:create-release-forms');
     Route::get('/summary', [ReleaseFormController::class, 'summary'])->middleware('permission:view-release-forms');

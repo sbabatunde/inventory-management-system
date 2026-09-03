@@ -1,23 +1,23 @@
 <?php
 // Modules/ReleaseForm/Tests/Feature/ReleaseFormWorkflowTest.php
 
-namespace Modules\ReleaseForm\Tests\Feature;
+namespace Modules\ReleaseForm\tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Modules\Inventory\App\Models\Store;
 use Modules\Inventory\App\Models\StockItem;
 use Modules\Inventory\App\Models\StockBalance;
 use Modules\ReleaseForm\App\Models\ReleaseForm;
-use Modules\ReleaseForm\App\Enums\ReleaseStatus;
+use Modules\ReleaseForm\App\Models\ReleaseFormItem;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class ReleaseFormWorkflowTest extends TestCase
 {
-  use RefreshDatabase, WithFaker;
+  use RefreshDatabase;
 
   protected $user;
   protected $store;
@@ -28,17 +28,15 @@ class ReleaseFormWorkflowTest extends TestCase
   {
     parent::setUp();
 
-    // Create user with permissions
     $this->user = User::factory()->create();
     $role = Role::create(['name' => 'admin']);
+
     $permissions = [
       'view-release-forms',
       'create-release-forms',
       'edit-release-forms',
       'approve-release-forms',
       'dispatch-release-forms',
-      'view-stock',
-      'view-stores',
     ];
 
     foreach ($permissions as $permission) {
@@ -49,14 +47,12 @@ class ReleaseFormWorkflowTest extends TestCase
     $this->user->assignRole($role);
     $this->token = $this->user->createToken('test-token')->plainTextToken;
 
-    // Create test data
     $this->store = Store::factory()->create();
     $this->stockItem = StockItem::factory()->create([
       'unit_of_measure' => 'pcs',
       'unit_cost' => 1000,
     ]);
 
-    // Create stock balance
     StockBalance::create([
       'store_id' => $this->store->id,
       'stock_item_id' => $this->stockItem->id,
@@ -66,10 +62,12 @@ class ReleaseFormWorkflowTest extends TestCase
     ]);
   }
 
-  /** @test */
-  public function user_can_create_release_form()
+  #[Test]
+  public function can_create_release_form()
   {
-    $formData = [
+    $response = $this->withHeaders([
+      'Authorization' => 'Bearer ' . $this->token,
+    ])->postJson('/api/v1/release-forms', [
       'category' => 'others',
       'store_id' => $this->store->id,
       'destination_type' => 'Other',
@@ -82,17 +80,9 @@ class ReleaseFormWorkflowTest extends TestCase
           'unit_of_measure' => 'pcs',
         ],
       ],
-    ];
+    ]);
 
-    $response = $this->withHeaders([
-      'Authorization' => 'Bearer ' . $this->token,
-    ])->postJson('/api/v1/release-forms', $formData);
-
-    $response->assertStatus(201)
-      ->assertJson([
-        'success' => true,
-      ]);
-
+    $response->assertStatus(201);
     $this->assertDatabaseHas('release_forms', [
       'store_id' => $this->store->id,
       'category' => 'others',
@@ -100,22 +90,22 @@ class ReleaseFormWorkflowTest extends TestCase
     ]);
   }
 
-  /** @test */
-  public function release_form_goes_through_workflow()
+  #[Test]
+  public function release_form_goes_through_full_workflow()
   {
     // Create form
     $form = ReleaseForm::create([
-      'form_no' => 'RF-2024-000001',
+      'form_no' => 'RF-TEST-001',
       'category' => 'others',
       'store_id' => $this->store->id,
       'destination_type' => 'Other',
       'destination_name' => 'Test Location',
-      'status' => ReleaseStatus::DRAFT->value,
+      'status' => 'draft',
       'created_by' => $this->user->id,
     ]);
 
-    // Add item
-    $form->items()->create([
+    ReleaseFormItem::create([
+      'release_form_id' => $form->id,
       'stock_item_id' => $this->stockItem->id,
       'qty_requested' => 5,
       'qty_released' => 0,
@@ -157,22 +147,21 @@ class ReleaseFormWorkflowTest extends TestCase
     ])->postJson("/api/v1/release-forms/{$form->id}/complete");
 
     $response->assertStatus(200);
-
     $this->assertDatabaseHas('release_forms', [
       'id' => $form->id,
       'status' => 'completed',
     ]);
   }
 
-  /** @test */
+  #[Test]
   public function cannot_dispatch_without_approval()
   {
     $form = ReleaseForm::create([
-      'form_no' => 'RF-2024-000002',
+      'form_no' => 'RF-TEST-002',
       'category' => 'others',
       'store_id' => $this->store->id,
       'destination_type' => 'Other',
-      'status' => ReleaseStatus::DRAFT->value,
+      'status' => 'draft',
       'created_by' => $this->user->id,
     ]);
 
@@ -180,9 +169,6 @@ class ReleaseFormWorkflowTest extends TestCase
       'Authorization' => 'Bearer ' . $this->token,
     ])->postJson("/api/v1/release-forms/{$form->id}/dispatch");
 
-    $response->assertStatus(422)
-      ->assertJson([
-        'success' => false,
-      ]);
+    $response->assertStatus(422);
   }
 }

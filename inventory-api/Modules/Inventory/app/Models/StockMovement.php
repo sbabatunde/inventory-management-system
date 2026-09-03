@@ -5,13 +5,13 @@ namespace Modules\Inventory\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Modules\Inventory\app\Enums\StockMovementType;
 
 class StockMovement extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'stock_item_id',
@@ -28,67 +28,64 @@ class StockMovement extends Model
     ];
 
     protected $casts = [
-        'movement_type' => StockMovementType::class,
         'quantity' => 'integer',
         'quantity_before' => 'integer',
         'quantity_after' => 'integer',
     ];
 
+    /**
+     * Get stock item
+     */
     public function stockItem(): BelongsTo
     {
         return $this->belongsTo(StockItem::class);
     }
 
+    /**
+     * Get stock serial
+     */
     public function stockSerial(): BelongsTo
     {
         return $this->belongsTo(StockSerial::class);
     }
 
+    /**
+     * Get source store
+     */
     public function fromStore(): BelongsTo
     {
         return $this->belongsTo(Store::class, 'from_store_id');
     }
 
+    /**
+     * Get destination store
+     */
     public function toStore(): BelongsTo
     {
         return $this->belongsTo(Store::class, 'to_store_id');
     }
 
+    /**
+     * Get user who created
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 
+    /**
+     * Get reference (polymorphic)
+     */
     public function reference(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function scopeByType($query, StockMovementType $type)
+    /**
+     * Scope by type
+     */
+    public function scopeByType($query, string $type)
     {
-        return $query->where('movement_type', $type->value);
-    }
-
-    public function scopeByItem($query, int $stockItemId)
-    {
-        return $query->where('stock_item_id', $stockItemId);
-    }
-
-    public function scopeByStore($query, int $storeId)
-    {
-        return $query->where(function ($q) use ($storeId) {
-            $q->where('from_store_id', $storeId)
-                ->orWhere('to_store_id', $storeId);
-        });
-    }
-
-    public function scopeByDateRange($query, ?string $from, ?string $to)
-    {
-        return $query->when($from, function ($q, $from) {
-            return $q->whereDate('created_at', '>=', $from);
-        })
-            ->when($to, function ($q, $to) {
-                return $q->whereDate('created_at', '<=', $to);
-            });
+        return $query->where('movement_type', $type);
     }
 }

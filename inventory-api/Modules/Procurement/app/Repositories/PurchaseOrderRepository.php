@@ -1,7 +1,7 @@
 <?php
 // Modules/Procurement/app/Repositories/PurchaseOrderRepository.php
 
-namespace Modules\Procurement\App\Repositories;
+namespace Modules\Procurement\app\Repositories;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Procurement\App\Models\PurchaseOrder;
