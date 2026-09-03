@@ -9,6 +9,7 @@ import { assetsRoutes } from "../../modules/assets/routes";
 import { releaseFormRoutes } from "../../modules/release-form/routes";
 import { procurementRoutes } from "../../modules/procurement/routes";
 import { reportingRoutes } from "../../modules/reporting/routes";
+import { documentationRoutes } from "../../modules/documentation/routes";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
       ...releaseFormRoutes,
       ...procurementRoutes,
       ...reportingRoutes,
+      ...documentationRoutes,
     ],
   },
   ...authRoutes,

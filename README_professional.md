@@ -801,13 +801,6 @@ Example:
 feat: Add equipment release approval workflow
 ```
 
----
-
-## License
-
-This project is licensed under the **MIT License**.
-
-See the `LICENSE` file for the full license text.
 
 ---
 
@@ -823,16 +816,6 @@ This project is built with and supported by:
 
 ---
 
-## Support
-
-For questions, issues, or technical support:
-
-1. Open an issue in the repository.
-2. Review the documentation under `docs/`.
-3. Contact the project support team.
-
-> Replace the placeholder support contact with the project's actual support address before publishing.
-
 ---
 
 ## Roadmap
@@ -845,13 +828,6 @@ For questions, issues, or technical support:
 - [x] Equipment release forms with CRM integration
 - [x] Procurement management
 - [x] Reporting and analytics
-
-### Planned
-
-- [ ] Mobile application using React Native
-- [ ] Barcode and QR-code scanning
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
 
 ---
 

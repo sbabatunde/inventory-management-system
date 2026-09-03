@@ -76,3 +76,7 @@ Desktop.ini
 # Backup files
 *.bak
 *.backup
+
+#Docs
+.Docs
+.README_professional.md

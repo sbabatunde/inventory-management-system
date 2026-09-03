@@ -55,6 +55,11 @@ const AppLayout: React.FC = () => {
       icon: "fa-chart-line",
       colorClass: "pink",
     },
+    {
+      name: "Documentation",
+      icon: "fa-book",
+      route: "/documentation",
+    },
   ];
 
   const navigation: NavItem[] = [
