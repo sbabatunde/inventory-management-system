@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Assets\app\Http\Controllers\AssetsController as AssetController;
 
-Route::middleware('auth:sanctum')->prefix('assets')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1/assets')->group(function () {
   Route::get('/', [AssetController::class, 'index'])->middleware('permission:view-assets');
   Route::post('/', [AssetController::class, 'store'])->middleware('permission:create-assets');
   Route::get('/summary', [AssetController::class, 'summary'])->middleware('permission:view-assets');

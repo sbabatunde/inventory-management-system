@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pop_equipment', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asset_id')->constrained()->onDelete('cascade');
+            $table->foreignId('assets_id')->constrained()->onDelete('cascade');
             $table->string('pop_id')->nullable();
             $table->string('pop_name')->nullable();
             $table->string('pop_location')->nullable();

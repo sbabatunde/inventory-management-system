@@ -1,22 +1,42 @@
 <?php
+// Modules/Reporting/app/Models/ReportSummary.php
 
 namespace Modules\Reporting\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Reporting\Database\Factories\ReportSummaryFactory;
 
 class ReportSummary extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [];
+    protected $fillable = [
+        'report_type',
+        'period',
+        'period_value',
+        'summary_data',
+        'generated_at',
+    ];
 
-    // protected static function newFactory(): ReportSummaryFactory
-    // {
-    //     // return ReportSummaryFactory::new();
-    // }
+    protected $casts = [
+        'summary_data' => 'array',
+        'generated_at' => 'datetime',
+    ];
+
+    /**
+     * Scope by report type
+     */
+    public function scopeByType($query, string $type)
+    {
+        return $query->where('report_type', $type);
+    }
+
+    /**
+     * Scope by period
+     */
+    public function scopeByPeriod($query, string $period, string $periodValue)
+    {
+        return $query->where('period', $period)
+            ->where('period_value', $periodValue);
+    }
 }

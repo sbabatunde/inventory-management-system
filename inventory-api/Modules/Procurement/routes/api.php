@@ -11,7 +11,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('procurements', ProcurementController::class)->names('procurement');
 });
 
-Route::middleware('auth:sanctum')->prefix('procurement')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1/procurement')->group(function () {
     // Supplier routes
     Route::prefix('suppliers')->group(function () {
         Route::get('/', [SupplierController::class, 'index'])->middleware('permission:view-suppliers');
@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->prefix('procurement')->group(function () {
     });
 
     // Purchase Requisition routes
-    Route::prefix('purchase-requisitions')->group(function () {
+    Route::prefix('v1/purchase-requisitions')->group(function () {
         Route::get('/', [PurchaseRequisitionController::class, 'index'])->middleware('permission:view-purchase-requisitions');
         Route::post('/', [PurchaseRequisitionController::class, 'store'])->middleware('permission:create-purchase-requisitions');
         Route::get('/pending-approvals', [PurchaseRequisitionController::class, 'pendingApprovals'])->middleware('permission:approve-purchase-requisitions');
@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->prefix('procurement')->group(function () {
     });
 
     // Purchase Order routes
-    Route::prefix('purchase-orders')->group(function () {
+    Route::prefix('v1/purchase-orders')->group(function () {
         Route::get('/', [PurchaseOrderController::class, 'index'])->middleware('permission:view-purchase-orders');
         Route::post('/', [PurchaseOrderController::class, 'store'])->middleware('permission:create-purchase-orders');
         Route::get('/{id}', [PurchaseOrderController::class, 'show'])->middleware('permission:view-purchase-orders');
@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->prefix('procurement')->group(function () {
     });
 
     // Goods Receipt routes
-    Route::prefix('goods-receipts')->group(function () {
+    Route::prefix('v1/goods-receipts')->group(function () {
         Route::get('/', [GoodsReceiptController::class, 'index'])->middleware('permission:view-purchase-orders');
         Route::post('/', [GoodsReceiptController::class, 'store'])->middleware('permission:receive-goods');
         Route::get('/{id}', [GoodsReceiptController::class, 'show'])->middleware('permission:view-purchase-orders');

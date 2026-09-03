@@ -11,7 +11,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 
-Route::middleware('auth:sanctum')->prefix('integration')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1/integration')->group(function () {
     // Job Orders
     Route::prefix('job-orders')->group(function () {
         Route::get('/by-client', [JobOrderController::class, 'byClient']);

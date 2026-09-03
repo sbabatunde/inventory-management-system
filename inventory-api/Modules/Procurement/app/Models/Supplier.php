@@ -6,6 +6,7 @@ namespace Modules\Procurement\app\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Supplier extends Model
 {
@@ -40,7 +41,7 @@ class Supplier extends Model
         return $this->hasMany(PurchaseOrder::class);
     }
 
-    public function goodsReceipts(): HasMany
+    public function goodsReceipts(): HasManyThrough  // Changed from HasMany to HasManyThrough
     {
         return $this->hasManyThrough(
             GoodsReceipt::class,

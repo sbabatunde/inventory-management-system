@@ -1,5 +1,5 @@
 <?php
-// Modules/Assets/app/Http/Requests/StoreAssetRequest.php
+// Modules/Assets/app/Http/Requests/UpdateAssetRequest.php
 
 namespace Modules\Assets\app\Http\Requests;
 
@@ -8,17 +8,17 @@ use Modules\Assets\app\Enums\AssetType;
 use Modules\Assets\app\Enums\AssetStatus;
 use Modules\Assets\app\Enums\DepreciationMethod;
 
-class StoreAssetRequest extends FormRequest
+class UpdateAssetRequest extends FormRequest
 {
   public function authorize(): bool
   {
-    return $this->user()->can('create-assets');
+    return $this->user()->can('edit-assets');
   }
 
   public function rules(): array
   {
     return [
-      'asset_code' => 'nullable|string|max:50|unique:assets,asset_code',
+      'asset_code' => 'nullable|string|max:50|unique:assets,asset_code,' . $this->route('id'),
       'name' => 'required|string|max:255',
       'description' => 'nullable|string|max:1000',
       'type' => 'required|string|in:' . implode(',', AssetType::values()),
@@ -32,15 +32,6 @@ class StoreAssetRequest extends FormRequest
       'useful_life_months' => 'nullable|integer|min:1',
       'depreciation_method' => 'nullable|string|in:' . implode(',', DepreciationMethod::values()),
       'is_active' => 'nullable|boolean',
-    ];
-  }
-
-  public function messages(): array
-  {
-    return [
-      'name.required' => 'Asset name is required',
-      'type.required' => 'Asset type is required',
-      'type.in' => 'Invalid asset type',
     ];
   }
 }
