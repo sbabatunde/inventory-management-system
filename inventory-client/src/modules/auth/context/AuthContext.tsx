@@ -6,10 +6,10 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useCallback,
 } from "react";
 import { User } from "../../../shared/types/global";
 import { authService } from "../services/auth.service";
-import toast from "react-hot-toast";
 
 interface AuthContextType {
   user: User | null;
@@ -31,6 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const initAuth = async () => {
       const token = authService.getToken();
+
       if (token) {
         try {
           const currentUser = await authService.getCurrentUser();
@@ -39,8 +40,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         } catch (error) {
           authService.removeToken();
           authService.removeUser();
-          toast.error("Session expired. Please login again.");
+          setUser(null);
         }
+      } else {
+        authService.removeToken();
+        authService.removeUser();
+        setUser(null);
       }
       setIsLoading(false);
     };
@@ -48,45 +53,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     initAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     const response = await authService.login({
       email,
       password,
       method: "local",
     });
 
-    if (response.success && response.data) {
-      authService.setToken(response.data.token);
-      authService.setUser(response.data.user);
-      setUser(response.data.user);
+    // response is already response.data from auth.service.ts
+    if (response.success && response.data?.token) {
+      const { token, user } = response.data;
+      authService.setToken(token);
+      authService.setUser(user);
+      setUser(user);
     } else {
       throw new Error(response.message || "Login failed");
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authService.logout();
-      toast.success("Logged out successfully");
     } catch (error) {
-      toast.error("Failed to logout");
+      console.error("Logout error:", error);
     } finally {
+      authService.removeToken();
+      authService.removeUser();
       setUser(null);
     }
-  };
+  }, []);
 
-  const updateUser = (updatedUser: User) => {
+  const updateUser = useCallback((updatedUser: User) => {
     setUser(updatedUser);
     authService.setUser(updatedUser);
-  };
-
-  const isAuthenticated = !!user;
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
+        isAuthenticated: !!user && !!authService.getToken(),
         isLoading,
         login,
         logout,
@@ -100,7 +106,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

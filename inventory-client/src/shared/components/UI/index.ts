@@ -11,3 +11,6 @@ export { default as Badge } from './Badge';
 export { default as EmptyState } from './EmptyState';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as ConfirmDialog } from './ConfirmDialog';
+export { default as LoadingProgress } from './LoadingProgress';
+export { default as FullPageLoading } from './FullPageLoading';
+export { default as LazyLoadingWrapper } from './LazyLoadingWrapper';

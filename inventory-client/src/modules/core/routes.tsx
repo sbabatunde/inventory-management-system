@@ -2,8 +2,6 @@
 
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import ProtectedRoute from "../auth/components/ProtectedRoute";
-
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const UserManagement = lazy(() => import("./components/Users/UserManagement"));
 const SettingsPage = lazy(() => import("./components/Settings/SettingsPage"));
@@ -11,35 +9,19 @@ const ProfilePage = lazy(() => import("./components/Profile/ProfilePage"));
 
 export const coreRoutes: RouteObject[] = [
   {
-    path: "/dashboard",
-    element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
-    ),
+    path: "dashboard",
+    element: <Dashboard />,
   },
   {
-    path: "/users",
-    element: (
-      <ProtectedRoute>
-        <UserManagement />
-      </ProtectedRoute>
-    ),
+    path: "users",
+    element: <UserManagement />,
   },
   {
-    path: "/settings",
-    element: (
-      <ProtectedRoute>
-        <SettingsPage />
-      </ProtectedRoute>
-    ),
+    path: "settings",
+    element: <SettingsPage />,
   },
   {
-    path: "/profile",
-    element: (
-      <ProtectedRoute>
-        <ProfilePage />
-      </ProtectedRoute>
-    ),
+    path: "profile",
+    element: <ProfilePage />,
   },
 ];

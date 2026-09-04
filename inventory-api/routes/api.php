@@ -5,6 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 
+Route::get('/auth/unauthenticated', function () {
+    return response()->json([
+        'success' => false,
+        'message' => 'Unauthenticated.'
+    ], 401);
+})->name('login');
+
 Route::prefix('v1')->group(function () {
     // Auth routes
     Route::prefix('auth')->group(function () {
@@ -19,7 +26,4 @@ Route::prefix('v1')->group(function () {
             Route::post('/refresh', [AuthController::class, 'refresh']);
         });
     });
-
-    // Core module routes (loaded from module)
-    // ...
 });

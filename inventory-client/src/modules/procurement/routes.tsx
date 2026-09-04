@@ -14,7 +14,7 @@ const PurchaseOrderList = lazy(
 
 export const procurementRoutes: RouteObject[] = [
   {
-    path: "/procurement/suppliers",
+    path: "procurement/suppliers",
     element: (
       <ProtectedRoute>
         <SupplierList />
@@ -22,7 +22,7 @@ export const procurementRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/procurement/requisitions",
+    path: "procurement/requisitions",
     element: (
       <ProtectedRoute>
         <PurchaseRequisitionList />
@@ -30,7 +30,7 @@ export const procurementRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/procurement/purchase-orders",
+    path: "procurement/purchase-orders",
     element: (
       <ProtectedRoute>
         <PurchaseOrderList />

@@ -35,7 +35,8 @@ const LoginPage: React.FC = () => {
       dismissToast(loadingToast);
       showSuccess("Login successful! Redirecting...");
 
-      const from = (location.state as any)?.from?.pathname || "/dashboard";
+      const from = (location.state as any)?.from || "/dashboard";
+      console.log("Redirecting to:", from);
       setTimeout(() => navigate(from, { replace: true }), 500);
     } catch (error: any) {
       dismissToast(loadingToast);

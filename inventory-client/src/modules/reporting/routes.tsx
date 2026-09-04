@@ -2,17 +2,12 @@
 
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import ProtectedRoute from "../auth/components/ProtectedRoute";
 
 const ReportDashboard = lazy(() => import("./components/ReportDashboard"));
 
 export const reportingRoutes: RouteObject[] = [
   {
-    path: "/reports",
-    element: (
-      <ProtectedRoute>
-        <ReportDashboard />
-      </ProtectedRoute>
-    ),
+    path: "reports",
+    element: <ReportDashboard />, // Clean! ProtectedRoute is already on the parent AppLayout in router/index.tsx
   },
 ];

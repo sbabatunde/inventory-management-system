@@ -39,14 +39,28 @@ const ReportDashboard: React.FC = () => {
   const fetchReports = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const [cost, inventory, suppliers] = await Promise.all([
+      // Promise.allSettled allows individual report API requests to fail
+      // without crashing the entire page or throwing a global error
+      const [costRes, inventoryRes, suppliersRes] = await Promise.allSettled([
         reportService.getCostBreakdown(selectedMonth),
         reportService.getInventoryReport(),
         reportService.getSupplierPerformance(selectedMonth),
       ]);
-      setCostBreakdown(cost);
-      setInventoryValuation(inventory);
-      setSupplierPerformance(suppliers);
+
+      if (costRes.status === "fulfilled") setCostBreakdown(costRes.value);
+      if (inventoryRes.status === "fulfilled")
+        setInventoryValuation(inventoryRes.value);
+      if (suppliersRes.status === "fulfilled")
+        setSupplierPerformance(suppliersRes.value);
+
+      // Show a gentle toast if a specific sub-report fails instead of breaking everything
+      if (
+        costRes.status === "rejected" ||
+        inventoryRes.status === "rejected" ||
+        suppliersRes.status === "rejected"
+      ) {
+        showError("Some report sections failed to load.");
+      }
     } catch (error: any) {
       showError(error.message || "Failed to load reports");
     } finally {

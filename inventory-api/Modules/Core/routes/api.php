@@ -9,7 +9,7 @@ use Modules\Core\Http\Controllers\ProfileController;
 use Modules\Core\Http\Controllers\UserManagementController;
 use Modules\Core\Http\Controllers\ActivityLogController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/activities', [DashboardController::class, 'recentActivities']);
@@ -59,12 +59,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+
+    Route::middleware('permission:create-users')->group(function () {
+        Route::post('/users/sync-from-crm', [UserManagementController::class, 'syncFromCrm']);
+    });
+
+    Route::middleware('permission:view-users')->group(function () {
+        Route::get('/users/search-crm-users', [UserManagementController::class, 'searchCrmUsers']);
+    });
 });
 
-Route::middleware('permission:create-users')->group(function () {
-    Route::post('/users/sync-from-crm', [UserManagementController::class, 'syncFromCrm']);
-});
 
-Route::middleware('permission:view-users')->group(function () {
-    Route::get('/users/search-crm-users', [UserManagementController::class, 'searchCrmUsers']);
-});

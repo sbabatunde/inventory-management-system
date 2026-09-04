@@ -10,7 +10,7 @@ const DocumentationLayout = lazy(
 
 export const documentationRoutes: RouteObject[] = [
   {
-    path: "/documentation",
+    path: "documentation",
     element: (
       <ProtectedRoute>
         <DocumentationLayout />

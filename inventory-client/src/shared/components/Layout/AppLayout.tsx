@@ -9,6 +9,7 @@ interface ModuleInfo {
   name: string;
   key: string;
   icon: string;
+  route: string;
   colorClass: string;
   description?: string;
 }
@@ -28,37 +29,59 @@ const AppLayout: React.FC = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
+  // Add useEffect to handle sidebar state on resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setMobileSidebarOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const modules: ModuleInfo[] = [
-    { name: "Dashboard", key: "core", icon: "fa-gauge", colorClass: "emerald" },
+    {
+      name: "Dashboard",
+      key: "core",
+      icon: "fa-gauge",
+      colorClass: "emerald",
+      route: "/dashboard",
+    },
     {
       name: "Inventory",
       key: "inventory",
       icon: "fa-boxes-stacked",
       colorClass: "blue",
+      route: "/inventory",
     },
     {
       name: "Release Forms",
       key: "release-form",
       icon: "fa-file-signature",
       colorClass: "purple",
+      route: "/release-forms",
     },
-    { name: "Assets", key: "assets", icon: "fa-microchip", colorClass: "teal" },
+    {
+      name: "Assets",
+      key: "assets",
+      icon: "fa-microchip",
+      colorClass: "teal",
+      route: "/assets",
+    },
     {
       name: "Procurement",
       key: "procurement",
       icon: "fa-truck-field",
       colorClass: "amber",
+      route: "/procurement",
     },
     {
       name: "Reports",
       key: "reporting",
       icon: "fa-chart-line",
       colorClass: "pink",
-    },
-    {
-      name: "Documentation",
-      icon: "fa-book",
-      route: "/documentation",
+      route: "/reports",
     },
   ];
 
@@ -90,6 +113,11 @@ const AppLayout: React.FC = () => {
       name: "Profile",
       icon: "fa-user",
       route: "/profile",
+    },
+    {
+      name: "Documentation",
+      icon: "fa-book",
+      route: "/documentation",
     },
   ];
 
@@ -123,6 +151,18 @@ const AppLayout: React.FC = () => {
   const isActiveRoute = (route?: string): boolean => {
     if (!route) return false;
     return location.pathname === route || location.pathname.startsWith(route);
+  };
+
+  const getModuleColor = (colorClass: string): string => {
+    const colorMap: Record<string, string> = {
+      blue: "bg-blue-500",
+      purple: "bg-purple-500",
+      amber: "bg-amber-500",
+      teal: "bg-teal-500",
+      pink: "bg-pink-500",
+      emerald: "bg-emerald-500",
+    };
+    return colorMap[colorClass] || "bg-emerald-500";
   };
 
   return (
@@ -159,7 +199,7 @@ const AppLayout: React.FC = () => {
                   {user?.name || "User"}
                 </div>
                 <div className="text-[10px] text-slate-500 leading-tight">
-                  {user?.roles?.[0] || "Staff"}
+                  {user?.roles?.[0]?.name || user?.roles?.[0] || "Staff"}
                 </div>
               </div>
               <i className="fas fa-chevron-down text-[10px] text-slate-400" />
@@ -230,12 +270,12 @@ const AppLayout: React.FC = () => {
         <nav className="p-3 space-y-1 overflow-y-auto">
           {navigation.map((item, index) => {
             const hasChildren = item.children && item.children.length > 0;
-            const isOpen = openMenus[index] || false;
+            const isOpen = openMenus[index.toString()] || false;
             const isActive = isActiveRoute(item.route);
 
             if (hasChildren) {
               return (
-                <div key={index}>
+                <div key={`nav-${index}`}>
                   <button
                     onClick={() => toggleMenu(index.toString())}
                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
@@ -260,7 +300,7 @@ const AppLayout: React.FC = () => {
                     <div className="ml-4 mt-1 space-y-1">
                       {item.children?.map((child, childIndex) => (
                         <button
-                          key={childIndex}
+                          key={`child-${index}-${childIndex}`}
                           onClick={() => handleNavigation(child.route)}
                           className={`w-full flex items-center gap-3 pl-8 pr-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                             isActiveRoute(child.route)
@@ -280,7 +320,7 @@ const AppLayout: React.FC = () => {
 
             return (
               <button
-                key={index}
+                key={`nav-item-${index}`}
                 onClick={() => handleNavigation(item.route)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
@@ -308,25 +348,13 @@ const AppLayout: React.FC = () => {
               .filter((m) => m.key !== "core")
               .map((module) => (
                 <button
-                  key={module.key}
-                  onClick={() => handleNavigation(`/modules/${module.key}`)}
+                  key={`module-${module.key}`}
+                  onClick={() => handleNavigation(module.route)} // <-- Use module.route directly
                   className="flex items-center gap-2 p-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors"
                   title={module.name}
                 >
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      module.colorClass === "blue"
-                        ? "bg-blue-500"
-                        : module.colorClass === "purple"
-                          ? "bg-purple-500"
-                          : module.colorClass === "amber"
-                            ? "bg-amber-500"
-                            : module.colorClass === "teal"
-                              ? "bg-teal-500"
-                              : module.colorClass === "pink"
-                                ? "bg-pink-500"
-                                : "bg-emerald-500"
-                    }`}
+                    className={`w-2 h-2 rounded-full ${getModuleColor(module.colorClass)}`}
                   />
                   {!sidebarCollapsed && (
                     <span className="text-[10px] text-slate-400 font-medium truncate">

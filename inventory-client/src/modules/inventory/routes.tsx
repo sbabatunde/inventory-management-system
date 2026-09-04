@@ -20,7 +20,7 @@ const StockAdjustmentList = lazy(
 
 export const inventoryRoutes: RouteObject[] = [
   {
-    path: "/inventory/stores",
+    path: "inventory/stores",
     element: (
       <ProtectedRoute>
         <StoreList />
@@ -28,7 +28,7 @@ export const inventoryRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/inventory/stock-items",
+    path: "inventory/stock-items",
     element: (
       <ProtectedRoute>
         <StockItemList />
@@ -36,7 +36,7 @@ export const inventoryRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/inventory/stock-transfers",
+    path: "inventory/stock-transfers",
     element: (
       <ProtectedRoute>
         <StockTransferList />
@@ -44,7 +44,7 @@ export const inventoryRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/inventory/stock-movements",
+    path: "inventory/stock-movements",
     element: (
       <ProtectedRoute>
         <StockMovementList />
@@ -52,7 +52,7 @@ export const inventoryRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "/inventory/stock-adjustments",
+    path: "inventory/stock-adjustments",
     element: (
       <ProtectedRoute>
         <StockAdjustmentList />

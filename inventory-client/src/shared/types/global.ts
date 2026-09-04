@@ -6,7 +6,7 @@ export interface User {
     email: string;
     employee_id?: string;
     department?: string;
-    roles: string[];
+    roles: string[] | Array<{ id: number; name: string }>; 
     permissions: string[];
     is_active: boolean;
     last_login_at?: string;

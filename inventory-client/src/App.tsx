@@ -1,11 +1,12 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+// src/App.tsx
+
+import { RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./modules/auth/context/AuthContext";
-import LoginPage from "./modules/auth/components/LoginPage";
+import { router } from "./app/router";
 
 export default function App() {
   return (
-    <AuthProvider>
+    <>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -41,11 +42,7 @@ export default function App() {
         }}
       />
 
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        {/* Add dashboard or other routes here */}
-      </Routes>
-    </AuthProvider>
+      <RouterProvider router={router} />
+    </>
   );
 }

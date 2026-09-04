@@ -1,5 +1,3 @@
-// src/modules/assets/components/AssetFormModal.tsx
-
 import React, { useState, useEffect } from "react";
 import { Modal, Input, Select, Button } from "../../../shared/components/UI";
 import { Asset, AssetType, AssetStatus, DepreciationMethod } from "../types";
@@ -87,8 +85,18 @@ const AssetFormModal: React.FC<AssetFormModalProps> = ({
   const fetchStores = async (): Promise<void> => {
     try {
       const response = await storeService.getStores({ per_page: 100 });
-      setStores(response.stores);
+      // Safely check common API structures (Laravel API resources, direct arrays, or key properties)
+      const storeList = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.stores)
+          ? response.stores
+          : Array.isArray(response?.data)
+            ? response.data
+            : [];
+
+      setStores(storeList);
     } catch (error: any) {
+      setStores([]);
       showError(error.message || "Failed to load stores");
     }
   };
@@ -96,8 +104,18 @@ const AssetFormModal: React.FC<AssetFormModalProps> = ({
   const fetchStockItems = async (): Promise<void> => {
     try {
       const response = await stockItemService.getStockItems({ per_page: 100 });
-      setStockItems(response.stockItems);
+      // Safely check common API structures
+      const stockList = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.stockItems)
+          ? response.stockItems
+          : Array.isArray(response?.data)
+            ? response.data
+            : [];
+
+      setStockItems(stockList);
     } catch (error: any) {
+      setStockItems([]);
       showError(error.message || "Failed to load stock items");
     }
   };
@@ -281,10 +299,12 @@ const AssetFormModal: React.FC<AssetFormModalProps> = ({
             />
             <Select
               label="Link to Stock Item"
-              options={stockItems.map((item) => ({
-                value: item.id,
-                label: `${item.name} (${item.code})`,
-              }))}
+              options={(Array.isArray(stockItems) ? stockItems : []).map(
+                (item) => ({
+                  value: item.id,
+                  label: `${item.name} (${item.code})`,
+                }),
+              )}
               value={formData.stock_item_id}
               onChange={(e) =>
                 setFormData({
@@ -315,7 +335,7 @@ const AssetFormModal: React.FC<AssetFormModalProps> = ({
             />
             <Select
               label="Current Store"
-              options={stores.map((store) => ({
+              options={(Array.isArray(stores) ? stores : []).map((store) => ({
                 value: store.id,
                 label: `${store.name} (${store.code})`,
               }))}
